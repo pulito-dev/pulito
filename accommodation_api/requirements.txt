@@ -1,0 +1,4 @@
+celery
+aio-pika
+sqlmodel
+fastapi[standard]
