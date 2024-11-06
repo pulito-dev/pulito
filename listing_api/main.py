@@ -4,7 +4,8 @@ from .core.config import config
 from .rabbit.client import mq_cl
 from contextlib import asynccontextmanager
 from sqlalchemy.schema import CreateSchema
-from .rabbit.handlers.test import test_handler
+
+from .rabbit.handlers.cascade_delete import cascade_delete_handler
 
 
 @asynccontextmanager
@@ -12,15 +13,15 @@ async def lifespan(_: FastAPI):
     # everything before yield is executed before the app starts up
     # set up rabbit
     await mq_cl.connect(str(config.RABBIT_URI))
-    await mq_cl.consume("accommodations", test_handler)
-    # await mq_cl.consume("accommodations.asdf
+    await mq_cl.consume("listings.cascade_delete", cascade_delete_handler)
+    # await mq_cl.consume("listings.asdf
 
     # set up db
     db_cl.connect(str(config.DB_URI))
     with db_cl.engine.connect() as conn:
         conn.execute(CreateSchema(str(config.DB_SCHEMA), if_not_exists=True))
         conn.commit()
-    
+
     # create tables
     db_cl.init_db()
 
@@ -37,10 +38,10 @@ app = FastAPI(
 )
 
 
-from .routes.accommodations import accommodation_router
+from .routes.listings import listings_router
 
 
-app.include_router(accommodation_router, prefix="/accommodations")
+app.include_router(listings_router, prefix="/listings")
 
 
 # @app.api_route("/")

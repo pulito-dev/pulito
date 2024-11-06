@@ -14,7 +14,30 @@ services:
         ports:
             - 5000:5000
         environment:
+            ENV: ${ENV:?Missing ENV}
+            DB_URI: ${DB_URI:?Missing DB_URI}
             RABBIT_URI: ${RABBIT_URI:?Missing RABBIT_URI}
+
+        restart: always
+
+    # listing api
+    listing_api:
+        container_name: listing_api
+        build: ./listing_api
+        volumes:
+            - ./listing_api:/app
+        depends_on:
+            mq:
+                condition: service_healthy
+            db:
+                condition: service_healthy
+        ports:
+            - 5001:5000
+        environment:
+            ENV: ${ENV:?Missing ENV}
+            DB_URI: ${DB_URI:?Missing DB_URI}
+            RABBIT_URI: ${RABBIT_URI:?Missing RABBIT_URI}
+
         restart: always
 
     # event bus
@@ -45,17 +68,16 @@ services:
             # data persistence
             - ./volumes/postgres:/var/lib/postgresql/data
             # init script
-            - ./docker/postgres:/docker-entrypoint-initdb.d
+            # - ./docker/postgres:/docker-entrypoint-initdb.d
         restart: always
         environment:
             POSTGRES_USER: ${DB_USER:?Missing DB_USER}
             POSTGRES_PASSWORD: ${DB_PASS:?Missing DB_PASS}
         healthcheck:
-            test: pg_isready y
-            interval: 1m30s
-            timeout: 30s
-            retries: 5
-            start_period: 30s
+            test: pg_isready -d postgres -U ${DB_USER:?Missing DB_USER}
+            interval: 10s
+            timeout: 10s
+            retries: 3
         labels:
             - traefik.enable=false
 

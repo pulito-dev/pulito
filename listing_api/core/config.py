@@ -11,14 +11,14 @@ class Config(BaseSettings):
         default="dev"
     )
     # fastapi
-    TITLE: str = "Accommodation API"
+    TITLE: str = "Listing API"
     SECRET_KEY: str = secrets.token_urlsafe(8)
 
     # db
     DB_URI: PostgresDsn = Field(
         default="postgres://root:postgres@db/root"
     )
-    DB_SCHEMA: str = "accommodation"
+    DB_SCHEMA: str = "listing"
 
     # rabbit
     RABBIT_URI: AmqpDsn = Field(

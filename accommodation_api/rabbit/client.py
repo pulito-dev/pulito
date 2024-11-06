@@ -1,8 +1,6 @@
 import json
-import random
-import asyncio
+from typing import Callable
 from aio_pika import connect, Message, IncomingMessage
-
 
 class MQClient:
     def __init__(self):
@@ -23,34 +21,19 @@ class MQClient:
             await self.connection.close()
 
 
-    async def is_connected(self):
+    def is_connected(self):
         if self.connection.is_closed or self.channel.is_closed:
             return False
         return True
-    
-
-    async def _on_msg(self, msg: IncomingMessage):
-
-        # if an exeception gets raised, message gets rejected and put beck in the queue
-        async with msg.process(requeue=True):
-            msg_text =  json.loads(
-                msg.body.decode("utf-8")
-            )
-
-            txt = msg_text["random_id"]
-            print(f"RECV: {txt}")
-
-            # simulate random failures
-            # if random.choice([True, False]):
-            #     raise Exception("asdfasdf")
 
 
-    async def consume(self, queue_name: str):
+    async def consume(self, queue_name: str, callback: Callable[[IncomingMessage], None]):
         self.queue = await self.channel.declare_queue(queue_name)
 
         await self.queue.consume(
-            callback=self._on_msg,
-            no_ack=False             # deliver auto ack on
+            callback=callback,
+            # https://aio-pika.readthedocs.io/en/latest/rabbitmq-tutorial/2-work-queues.html#message-acknowledgment
+            no_ack=False
         )
         
         print(f"started consuming queue {queue_name}")
@@ -72,4 +55,6 @@ class MQClient:
                 message=msg,
                 routing_key=queue
             )
-        
+    
+
+mq_cl = MQClient()
