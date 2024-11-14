@@ -14,8 +14,6 @@ async def get_all_listings(db: Session = Depends(get_db)) -> ListingsPublic:
     statement = select(Listing)
     listings = db.exec(statement).all()
     
-    print(listings)
-
     return ListingsPublic(data=listings)
 
 
