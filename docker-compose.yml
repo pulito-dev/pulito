@@ -1,7 +1,7 @@
 services:
     # accommodation api
-    accommodation_api:
-        container_name: accommodation_api
+    accommodation-api:
+        container_name: accommodation-api
         build: ./accommodation_api
         volumes:
             - ./accommodation_api:/app
@@ -20,8 +20,8 @@ services:
         restart: always
 
     # listing api
-    listing_api:
-        container_name: listing_api
+    listing-api:
+        container_name: listing-api
         build: ./listing_api
         volumes:
             - ./listing_api:/app
@@ -53,9 +53,9 @@ services:
             RABBITMQ_DEFAULT_PASS: ${RABBIT_PASS:?Missing RABBIT_PASS}
         healthcheck:
             test: rabbitmq-diagnostics -q ping
-            interval: 10s
-            timeout: 10s
-            retries: 3
+            interval: 5s
+            timeout: 5s
+            retries: 6
 
     # database
     db:
@@ -74,9 +74,9 @@ services:
             POSTGRES_PASSWORD: ${DB_PASS:?Missing DB_PASS}
         healthcheck:
             test: pg_isready -d postgres -U ${DB_USER:?Missing DB_USER}
-            interval: 10s
-            timeout: 10s
-            retries: 3
+            interval: 5s
+            timeout: 5s
+            retries: 6
         labels:
             - traefik.enable=false
 
