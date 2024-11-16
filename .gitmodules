@@ -1,15 +1,15 @@
 [submodule "accommodation-api"]
-    path = accommodation_api
-    url = git@github.com:pulito-dev/accommodation-api.git
+	path = accommodation_api
+	url = git@github.com:pulito-dev/accommodation-api.git
 
 [submodule "listing-api"]
-    path = listing_api
-    url = git@github.com:pulito-dev/listing-api.git
+	path = listing_api
+	url = git@github.com:pulito-dev/listing-api.git
 
 [submodule "tests"]
-    path = tests
-    url = git@github.com:pulito-dev/tests.git
+	path = tests
+	url = git@github.com:pulito-dev/tests.git
 
 [submodule "k8s"]
-    path = k8s
-    url = git@github.com:pulito-dev/k8s.git
+	path = k8s
+	url = git@github.com:pulito-dev/k8s.git
