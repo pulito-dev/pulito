@@ -42,7 +42,7 @@ services:
     # event bus
     mq:
         container_name: rabbitmq
-        image: rabbitmq:3-management
+        image: rabbitmq:4-management
         ports:
             - 5672:5672
             - 15672:15672
@@ -61,6 +61,7 @@ services:
     db:
         container_name: main_db
         image: postgres:17
+        command: -c "max_connections=1000"
         ports:
           - 5432:5432
         volumes:
@@ -80,19 +81,18 @@ services:
         labels:
             - traefik.enable=false
 
-    # # celery worker
-    # worker:
-    #     container_name: worker
-    #     build: ./worker
-    #     volumes:
-    #         - ./worker:/app
-    #     depends_on:
-    #         mq:
-    #             condition: service_healthy
-    #         b:
-    #             condition: service_started
-    #     restart: always
-    #     environment:
-    #         CELERY_BROKER_URI: ${CELERY_BROKER_URI:?Missing CELERY_BROKER_URI}
-    #         CELERY_BACKEND_URI: ${CELERY_BACKEND_URI:?Missing CELERY_BACKEND_URI}
-    
+    gateway:
+        container_name: gateway
+        image: traefik:v3.1
+        ports:
+            # http traffic
+            - 80:80
+
+            # browser dashboard (enabled by --api.insecure=true)
+            - 7000:8080
+        volumes:
+            # docker socket connection
+            - /var/run/docker.sock:/var/run/docker.sock
+
+            # config
+            - ./traefik.yml:/etc/traefik/traefik.yml

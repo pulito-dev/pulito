@@ -1,0 +1,15 @@
+providers:
+    docker: {}
+
+api:
+    insecure: true
+
+tracing:
+    {}
+
+accessLog:
+    {}
+
+entrypoints:
+    api:
+        address: ":80"
